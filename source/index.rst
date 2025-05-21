@@ -175,6 +175,7 @@ In this dataset, each patient is associated with a mask that identifies the tumo
 4: Enhancing tumor (ET)
 
 .. code-block:: python
+
    # Loading a segmentation mask
 
    seg = nib.load("data/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/BraTS20_Training_001/BraTS20_Training_001_seg.nii").get_fdata()
@@ -249,6 +250,7 @@ __________________________
 For bias field correction, I used the N4 bias field correction algorithm implemented in the ANTsPy library:
 
 .. code-block:: python
+
    def bias_field_correction(img_path):
        try:
            filename = os.path.basename(img_path)
@@ -303,6 +305,7 @@ Where:
 The Z-score normalization is implemented as follows:
 
 .. code-block:: python
+
    def z_score_normalization(numpy_arr):
        mean_val = np.mean(numpy_arr)
        std_val = np.std(numpy_arr)
@@ -317,6 +320,7 @@ MRI brain scans often contain regions outside the brain that are not relevant fo
 The cropping function extracts a specific region of interest from the original 240×240×155 volume, focusing on the central part of the brain where tumors are typically located:
 
 .. code-block:: python
+
    def crop_img(volume):
        return volume[48:192, 48:192, 5:149]  # For 240x240x155 input
 
@@ -338,6 +342,7 @@ The BraTS dataset contains segmentation masks with labels 0, 1, 2, and 4, where:
 For consistency in model training, I converted the label 4 to label 3 and then apply one-hot encoding:
 
 .. code-block:: python
+
    def process_mask(mask_data):
        mask_uint8 = mask_data.astype(np.uint8)
        mask_uint8[mask_uint8 == 4] = 3
@@ -350,6 +355,7 @@ Complete Processing Pipeline
 The complete pipeline integrates all previously described steps, processing each patient's MRI data across all modalities (T1, T1ce, T2, and FLAIR) and segmentation masks:
 
 .. code-block:: python
+
    def process_patient(patient_dir, output_dir):
        try:
            patient_id = os.path.basename(patient_dir).split('_')[-1]
@@ -395,6 +401,7 @@ The complete pipeline integrates all previously described steps, processing each
 The preprocessed data is organized into separate directories for images and masks, maintaining the original BraTS naming convention for easy reference:
 
 .. code-block:: python
+
    def save_processed_data(output_dir, patient_id, modalities, mask):
        os.makedirs(f"{output_dir}_images", exist_ok=True)
        os.makedirs(f"{output_dir}_masks", exist_ok=True)
@@ -416,6 +423,7 @@ The preprocessed data is organized into separate directories for images and mask
 The complete pipeline is executed over the entire BraTS dataset with progress tracking and validation:
 
 .. code-block:: python
+
    # Main execution
    input_path = "/content/data/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData"
    output_path = "/content/data_Processed/BraTS2020_TrainingData_Processed"
@@ -492,6 +500,7 @@ Loss Function and Optimization
 I used the Categorical cross-entropy as a loss function as it is compatible for multi-class segmentation, and the Adam Optimizer with a learning rate of 0.001. As for the evaluation metric, I used the accuracy (though this is a limited metric for segmentation tasks).
 
 .. code-block:: python
+
    from keras.models import Model
    from keras.layers import Input, Conv3D, MaxPooling3D, concatenate, Conv3DTranspose, BatchNormalization, Dropout, Lambda
    from keras.optimizers import Adam
@@ -598,6 +607,7 @@ This way, I was able to reduce memory requirements while maintaining training ef
 The batch size was set to 2, which balanced between computational efficiency and memory constraints of the hardware. I chose to work with this batch size considering the large size of each 3D volume and the complexity of the network architecture.
 
 .. code-block:: python
+
    def data_generator(images_dir, masks_dir, patient_ids, batch_size=2):
        while True:
            for i in range(0, len(patient_ids), batch_size):
@@ -634,6 +644,7 @@ For the loss function, I used Categorical cross-entropy given the multi-class na
 This loss function is particularly effective for segmentation problems where each voxel is assigned to exactly one class. Model performance was monitored using accuracy as the primary metric.
 
 .. code-block:: python
+
    loss=tf.keras.losses.CategoricalCrossentropy()
    model.compile(optimizer=Adam(learning_rate=0.001),
                  loss= loss,
@@ -643,6 +654,7 @@ This loss function is particularly effective for segmentation problems where eac
 After completion of training, the model was saved in HDF5 format as 'u\_net\_model.hdf5', saving both the architecture and the learned weights for future use in prediction tasks or fine-tuning.
 
 .. code-block:: python
+
    patient_ids = [f"BraTS20_Training_{i:03d}" for i in range(1, 370)]  # 369 patients
    
    # Create the data generator
@@ -688,6 +700,7 @@ The preprocessing function loads the three modality scans (FLAIR, T1CE, and T2) 
 Intensity normalization was applied to each modality individually, subtracting the mean and dividing by the standard deviation. This z-score normalization standardized the intensity values, making the prediction more robust across different acquisition parameters and scanners. The three normalized modalities were then stacked along the channel dimension and expanded to include a batch dimension, creating the final input tensor with shape [1, 144, 144, 144, 3] required by the model.
 
 .. code-block:: python
+
    def preprocess_image(image_paths):
        modalities = []
        for img_path in image_paths:
@@ -710,6 +723,7 @@ Visualization
 -------------
 
 .. code-block:: python
+
    def visualize_prediction(original_img, prediction, slice_num=None):
        if slice_num is None:
            slice_num = original_img.shape[2] // 2
@@ -761,6 +775,7 @@ ________________
 The final segmentation mask was created by applying an argmax operation along the class dimension, selecting the class with the highest probability at each voxel position. This resulted in a single-channel segmentation mask where each voxel was assigned a value from 0 to 3, representing the different tumor components and background.
 
 .. code-block:: python
+
    try:
        model = tf.keras.models.load_model(model_path, compile=False)
        print("Model loaded successfully.")
