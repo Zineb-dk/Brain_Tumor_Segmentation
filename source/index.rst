@@ -776,29 +776,29 @@ The final segmentation mask was created by applying an argmax operation along th
 
 .. code-block:: python
 
-    try:
-        model = tf.keras.models.load_model(model_path, compile=False)
-        print("Model loaded successfully.")
-    except Exception as e:
-        raise RuntimeError(f"Error loading model: {e}")
-        
-    try:
-        preprocessed_img = preprocess_image([flair_path, t1ce_path, t2_path])
-        prediction = model.predict(preprocessed_img)
+   try:
+       model = tf.keras.models.load_model(model_path, compile=False)
+       print("Model loaded successfully.")
+   except Exception as e:
+       raise RuntimeError(f"Error loading model: {e}")
+   
+   try:
+       preprocessed_img = preprocess_image([flair_path, t1ce_path, t2_path])
+       prediction = model.predict(preprocessed_img)
 
-        visualize_prediction(preprocessed_img[0], prediction)
+       visualize_prediction(preprocessed_img[0], prediction)
 
-        pred_argmax = np.argmax(prediction[0], axis=3)
-        unique, counts = np.unique(pred_argmax, return_counts=True)
-        tumor_classes = ['Background', 'Necrotic and non-enhancing tumor core - NCR/NET','Peritumoral edema - ED', 'GD Enhancing Tumor - ET']
+       pred_argmax = np.argmax(prediction[0], axis=3)
+       unique, counts = np.unique(pred_argmax, return_counts=True)
+       tumor_classes = ['Background', 'Necrotic and non-enhancing tumor core - NCR/NET','Peritumoral edema - ED', 'GD Enhancing Tumor - ET']
 
-        print("\n Prediction Statistics:")
-        for cls, count in zip(unique, counts):
-            label = tumor_classes[cls] if cls < len(tumor_classes) else f"Class {cls}"
-            print(f"{label}: {count} voxels")
+       print("\n Prediction Statistics:")
+       for cls, count in zip(unique, counts):
+           label = tumor_classes[cls] if cls < len(tumor_classes) else f"Class {cls}"
+           print(f"{label}: {count} voxels")
 
-    except Exception as e:
-        raise RuntimeError(f"Prediction failed: {e}")
+   except Exception as e:
+       raise RuntimeError(f"Prediction failed: {e}")
 
 
 
