@@ -2,6 +2,8 @@
 Implementation of a widely used deep learning architecture (U-Net) for the task of automatic brain tumor segmentation using multi-parametric MRI scans. It uses the BraTS 2020 dataset, which provides annotated MRI images with labels identifying different tumor regions: the necrotic/non-enhancing core, peritumoral edema, and the GD-enhancing tumor.
 
 
+Check my full project documentaion |Here](https://brain-tumor-segmentation.readthedocs.io/en/latest/). 
+
 This project uses the U-Net deep learning architecture to automatically segment brain tumors from MRI scans. We use the [BraTS2020(Brain Tumor Segmentation) dataset]([https://www.med.upenn.edu/cbica/brats2021/data.html](https://www.kaggle.com/datasets/awsaf49/brats20-dataset-training-validation)), which contains multi-modal MRI images (T1, T1c, T2, FLAIR) along with expert-labeled ground truth masks.
 
 ---
