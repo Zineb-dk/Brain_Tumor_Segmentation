@@ -5,6 +5,32 @@ Implementation of a widely used deep learning architecture (U-Net) for the task 
 This project uses the U-Net deep learning architecture to automatically segment brain tumors from MRI scans. We use the [BraTS2020(Brain Tumor Segmentation) dataset]([https://www.med.upenn.edu/cbica/brats2021/data.html](https://www.kaggle.com/datasets/awsaf49/brats20-dataset-training-validation)), which contains multi-modal MRI images (T1, T1c, T2, FLAIR) along with expert-labeled ground truth masks.
 
 ---
+## Requirements
+The implementation of this project requires the following:
+
+• Programming Language - Python
+
+• Libraries and Frameworks
+
+- keras :
+  
+      - keras.models
+      - keras.layers
+      - keras.optimizers
+   
+- tensorflow
+- tensorflow.keras
+- numpy
+- sklearn
+- splitfolders
+- nibabel
+- ants (antspyx)
+- glob
+- tqdm
+- matplotlib
+- streamlit
+- tempfile
+- os
 
 ## Project Pipeline Overview
 
