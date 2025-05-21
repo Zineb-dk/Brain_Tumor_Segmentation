@@ -251,25 +251,25 @@ For bias field correction, I used the N4 bias field correction algorithm impleme
 
 .. code-block:: python
 
-   def bias_field_correction(img_path):
-       try:
-           filename = os.path.basename(img_path)
-           match = re.search(r"BraTS20_Training_(\d+)_(t1|t1ce|t2|flair|seg)\.nii", filename)
-           if not match:
-               return None
-   
-           original_img = ants.image_read(img_path)
-           mask = ants.get_mask(original_img)
-           corrected_img = ants.n4_bias_field_correction(
-               original_img,
-               mask=mask,
-               return_bias_field=False
-           )
-           return corrected_img.numpy()  # Return as numpy array 
-   
-       except Exception as e:
-           print(f"ERROR processing {img_path}: {str(e)}")
-           return None
+      def bias_field_correction(img_path):
+          try:
+              filename = os.path.basename(img_path)
+              match = re.search(r"BraTS20_Training_(\d+)_(t1|t1ce|t2|flair|seg)\.nii", filename)
+              if not match:
+                  return None
+      
+              original_img = ants.image_read(img_path)
+              mask = ants.get_mask(original_img)
+              corrected_img = ants.n4_bias_field_correction(
+                  original_img,
+                  mask=mask,
+                  return_bias_field=False
+              )
+              return corrected_img.numpy()  # Return as numpy array 
+      
+          except Exception as e:
+              print(f"ERROR processing {img_path}: {str(e)}")
+              return None
 
 
 The **get_mask** function creates a binary mask of the brain region, which helps focus the bias field correction on relevant areas. According to the ANTsPy documentation, this function:
@@ -776,28 +776,28 @@ The final segmentation mask was created by applying an argmax operation along th
 
 .. code-block:: python
 
-   try:
-       model = tf.keras.models.load_model(model_path, compile=False)
-       print("Model loaded successfully.")
-   except Exception as e:
-       raise RuntimeError(f"Error loading model: {e}")
-       
-   try:
-       preprocessed_img = preprocess_image([flair_path, t1ce_path, t2_path])
-       prediction = model.predict(preprocessed_img)
-   
-       visualize_prediction(preprocessed_img[0], prediction)
-   
-       pred_argmax = np.argmax(prediction[0], axis=3)
-       unique, counts = np.unique(pred_argmax, return_counts=True)
-       tumor_classes = ['Background', 'Necrotic and non-enhancing tumor core - NCR/NET','Peritumoral edema - ED', 'GD Enhancing Tumor - ET']
-   
-       print("\n Prediction Statistics:")
-       for cls, count in zip(unique, counts):
-           label = tumor_classes[cls] if cls < len(tumor_classes) else f"Class {cls}"
-           print(f"{label}: {count} voxels")
-   
-   except Exception as e:
-       raise RuntimeError(f"Prediction failed: {e}")
+      try:
+          model = tf.keras.models.load_model(model_path, compile=False)
+          print("Model loaded successfully.")
+      except Exception as e:
+          raise RuntimeError(f"Error loading model: {e}")
+          
+      try:
+          preprocessed_img = preprocess_image([flair_path, t1ce_path, t2_path])
+          prediction = model.predict(preprocessed_img)
+      
+          visualize_prediction(preprocessed_img[0], prediction)
+      
+          pred_argmax = np.argmax(prediction[0], axis=3)
+          unique, counts = np.unique(pred_argmax, return_counts=True)
+          tumor_classes = ['Background', 'Necrotic and non-enhancing tumor core - NCR/NET','Peritumoral edema - ED', 'GD Enhancing Tumor - ET']
+      
+          print("\n Prediction Statistics:")
+          for cls, count in zip(unique, counts):
+              label = tumor_classes[cls] if cls < len(tumor_classes) else f"Class {cls}"
+              print(f"{label}: {count} voxels")
+      
+      except Exception as e:
+          raise RuntimeError(f"Prediction failed: {e}")
 
 
