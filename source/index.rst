@@ -448,23 +448,30 @@ The 3D U-Net model implemented in this project follows the classic U-Net archite
 The architecture is modified to be compatible for 3D volumetric data with dimensions 144×144×144 pixels and 3 input channels.
 
 The network structure consists of:
-- Contracting Path: Five blocks of dual 3D convolution layers followed by max pooling, with progressively increasing feature maps (16→32→64→128→256). The encoder path of our 3D U-Net, also called the analysis path. This part of the network is responsible for learning and condensing important features from our 3D MRI scans.
-I started with a large 3D image, and the encoder breaks it down into layers of meaningful information. At each level, it learns more complex patterns by applying 3D filters—like how your brain might recognize edges, shapes, and then entire objects.
-The encoder is made up of five blocks, and in each block, the network learns more detailed features. It starts by creating 16 feature maps—think of these as 16 different ways the model looks at the MRI, each one trying to capture a specific pattern like edges, textures, or contrast differences.
-This is done using a 3D convolutional layer, which slides small 3D filters (3×3×3 in size) across the scan. The filters act like pattern detectors. So for example, one might highlight bright spots, another might detect curved edges.
-As we go deeper into the network, we double the number of feature maps at each level: 16, 32, 64, 128, and finally 256 at the deepest point, known as the bottleneck. This progression allows the model to go from learning simple features to very complex patterns, like those that might represent tumor shapes or textures.
-At the same time, max pooling is used after each convolution to reduce the size of the data, helping the model focus on the most important parts and reducing computation. It’s like zooming out to get a higher-level view while keeping essential details.
-By the time we reach the bottleneck, the original 144×144×144 MRI volume has been compressed into a much smaller, 9×9×9 size, but now with 256 different feature maps—each containing information that the network has learned to be useful for identifying tumors.
+
+
+- Contracting Path: 
+
+      Five blocks of dual 3D convolution layers followed by max pooling, with progressively increasing feature maps (16→32→64→128→256). The encoder path of our 3D U-Net, also called the analysis path. This part of the network is responsible for learning and condensing important features from our 3D MRI scans.
+      I started with a large 3D image, and the encoder breaks it down into layers of meaningful information. At each level, it learns more complex patterns by applying 3D filters—like how your brain might recognize edges, shapes, and then entire objects.
+      The encoder is made up of five blocks, and in each block, the network learns more detailed features. It starts by creating 16 feature maps—think of these as 16 different ways the model looks at the MRI, each one trying to capture a specific pattern like edges, textures, or contrast differences.
+      This is done using a 3D convolutional layer, which slides small 3D filters (3×3×3 in size) across the scan. The filters act like pattern detectors. So for example, one might highlight bright spots, another might detect curved edges.
+      As we go deeper into the network, we double the number of feature maps at each level: 16, 32, 64, 128, and finally 256 at the deepest point, known as the bottleneck. This progression allows the model to go from learning simple features to very complex patterns, like those that might represent tumor shapes or textures.
+      At the same time, max pooling is used after each convolution to reduce the size of the data, helping the model focus on the most important parts and reducing computation. It’s like zooming out to get a higher-level view while keeping essential details.
+      By the time we reach the bottleneck, the original 144×144×144 MRI volume has been compressed into a much smaller, 9×9×9 size, but now with 256 different feature maps—each containing information that the network has learned to be useful for identifying tumors.
 
 - Bottleneck: A dual 3D convolution block with 256 feature maps
-- Expansive Path: Four blocks of upsampling via 3D transposed convolutions, concatenation with corresponding encoder features via skip connections, and dual 3D convolution layers. This path, also called the 'synthesis path' , restors the size while keeping the features extracted by the encoder. While the encoder asks 'what' features are present, the decoder determines 'where' these features are located
 
-Beginning from our compressed 9×9×9×256 bottleneck representation, we use the transposed 3D convolutions to double spatial dimensions at each step
+- Expansive Path: 
 
-So.. what distinguishes our model from traditional encoder-decoder networks—is the skip connections visible in our code as 'concatenate' operations. These connections link across the 'U' shape, fusing feature maps from the encoder path with corresponding decoder levels. As you can see in the implementation, we concatenate u6 with c4, u7 with c3, and so forth.
-These skip connections restore spatial details lost during downsampling 
-After each concatenation, dual 3D convolutions refine these combined features. The network ends with a 1×1×1 convolution that classifies each voxel into one of four tumor classes using softmax activation
-- Output Layer: A 1×1×1 3D convolution with softmax activation producing a 4-class probability map
+      Four blocks of upsampling via 3D transposed convolutions, concatenation with corresponding encoder features via skip connections, and dual 3D convolution layers. This path, also called the 'synthesis path' , restors the size while keeping the features extracted by the encoder. While the encoder asks 'what' features are present, the decoder determines 'where' these features are located
+      
+      Beginning from our compressed 9×9×9×256 bottleneck representation, we use the transposed 3D convolutions to double spatial dimensions at each step
+      
+      So.. what distinguishes our model from traditional encoder-decoder networks—is the skip connections visible in our code as 'concatenate' operations. These connections link across the 'U' shape, fusing feature maps from the encoder path with corresponding decoder levels. As you can see in the implementation, we concatenate u6 with c4, u7 with c3, and so forth.
+      These skip connections restore spatial details lost during downsampling 
+      After each concatenation, dual 3D convolutions refine these combined features. The network ends with a 1×1×1 convolution that classifies each voxel into one of four tumor classes using softmax activation
+      - Output Layer: A 1×1×1 3D convolution with softmax activation producing a 4-class probability map
 
 Input and Output Specifications
 -------------------------------
