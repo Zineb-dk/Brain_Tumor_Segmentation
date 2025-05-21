@@ -139,17 +139,29 @@ Finally, use the following notebook to visualize predictions:
 ├── Brain_Tumor_Segmentation_Data_Prediction.ipynb
 ```
 
-## 5.Streamlit Web App
-The trained model is integrated into a Streamlit web app. Features include:
-- Uploading NIfTI .nii.gz scans
-- Real-time tumor segmentation
-- Instant 3D visualization of results
+## 5. Streamlit Web App
 
-Run it locally with:
+The trained model is integrated into two separate **Streamlit** web apps:
+
+### `Brain_Tumor_Segmentation_Streamlit.py`
+- Performs tumor segmentation after cropping all MRI volumes to a fixed shape of **144×144×144**.
+- Suitable when all input scans are preprocessed and standardized.
+
+### `Brain_Tumor_Segmentation_Streamlit_Mask.py`
+- Uses **intelligent cropping**: 
+  - A brain mask is first generated to isolate relevant brain tissue.
+  - Then, a bounding box is computed around the mask to crop the volume tightly around the brain region.
+  - This enables **adaptive segmentation** on MRI volumes of varying dimensions.
+- Recommended for real-world deployment where scan sizes may vary.
+
+You can run either version locally with:
+
+```bash
+streamlit run Brain_Tumor_Segmentation_Streamlit.py
+```
+
+Or :
 ```bash
 ├── streamlit run Brain_Tumor_Segmentation_Streamlit.py
 ```
-
-
-
 
