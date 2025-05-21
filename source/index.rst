@@ -471,7 +471,9 @@ The network structure consists of:
       So.. what distinguishes our model from traditional encoder-decoder networks—is the skip connections visible in our code as 'concatenate' operations. These connections link across the 'U' shape, fusing feature maps from the encoder path with corresponding decoder levels. As you can see in the implementation, we concatenate u6 with c4, u7 with c3, and so forth.
       These skip connections restore spatial details lost during downsampling 
       After each concatenation, dual 3D convolutions refine these combined features. The network ends with a 1×1×1 convolution that classifies each voxel into one of four tumor classes using softmax activation
-      - Output Layer: A 1×1×1 3D convolution with softmax activation producing a 4-class probability map
+
+
+- Output Layer: A 1×1×1 3D convolution with softmax activation producing a 4-class probability map
 
 Input and Output Specifications
 -------------------------------
