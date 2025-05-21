@@ -162,6 +162,6 @@ streamlit run Brain_Tumor_Segmentation_Streamlit.py
 
 Or :
 ```bash
-├── streamlit run Brain_Tumor_Segmentation_Streamlit.py
+├── streamlit run Brain_Tumor_Segmentation_Streamlit_Mask.py
 ```
 
